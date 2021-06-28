@@ -13,9 +13,9 @@ function createWindow() {
         })
         // win.webContents.openDevTools() ctrl+shift+i does the job.
 
-    win.loadFile("public/index.html")
+    // win.loadFile("public/index.html")
     // win.loadURL('http://localhost:3000/')
-    // win.loadURL(`file://${path.join(__dirname, '../build/index.html')}`)
+    win.loadURL(`file://${path.join(__dirname, '../build/index.html')}`)
 
     globalShortcut.register('f5', function() {
         console.log('f5 is pressed')

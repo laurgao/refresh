@@ -12,7 +12,7 @@ const Navbar = ({toggleDarkMode, state, setState, setIsSettings}: {toggleDarkMod
             
             <div className="flex flex-row">
                 <DarkModeButton onToggle={toggleDarkMode}/>
-                {state == "Screen time" && <PrimaryButton onClick={() => setState("Break")}>Take Break</PrimaryButton>}
+                {state === "Screen time" && <PrimaryButton onClick={() => setState("Break")}>Take Break</PrimaryButton>}
                 <button className="dark:text-white" onClick={() => setIsSettings(true)}><FaCog /></button>
             </div>
         </nav>

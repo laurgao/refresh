@@ -1,5 +1,7 @@
 {
-    "name": "electreact",
+    "name": "Refresh",
+    "author": "laura gao",
+    "description": "Force yourself to take breaks, force yourself to stay refreshed (especially on those awesome long deep work sesions).",
     "version": "0.1.0",
     "private": true,
     "main": "public/Main.js",
@@ -11,11 +13,13 @@
         "@testing-library/user-event": "^12.8.3",
         "@types/react-icons": "^3.0.0",
         "@types/react-modal": "^3.12.0",
+        "@types/react-sound": "^1.2.2",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-icons": "^4.2.0",
         "react-modal": "^3.14.3",
         "react-scripts": "4.0.3",
+        "react-sound": "^1.2.0",
         "web-vitals": "^1.1.2"
     },
     "scripts": {
