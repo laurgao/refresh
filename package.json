@@ -1,0 +1,69 @@
+{
+    "name": "electreact",
+    "version": "0.1.0",
+    "private": true,
+    "main": "public/Main.js",
+    "homepage": "./",
+    "dependencies": {
+        "@craco/craco": "^6.1.2",
+        "@testing-library/jest-dom": "^5.14.1",
+        "@testing-library/react": "^11.2.7",
+        "@testing-library/user-event": "^12.8.3",
+        "@types/react-icons": "^3.0.0",
+        "@types/react-modal": "^3.12.0",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-icons": "^4.2.0",
+        "react-modal": "^3.14.3",
+        "react-scripts": "4.0.3",
+        "web-vitals": "^1.1.2"
+    },
+    "scripts": {
+        "start": "craco start",
+        "build": "craco build",
+        "test": "craco test",
+        "eject": "react-scripts eject",
+        "electron-start": "electron .",
+        "preelectron-pack": "npm run build",
+        "electron-pack": "electron-builder -c.extraMetadata.main=build/Main.js"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@types/react": "^17.0.11",
+        "@types/react-dom": "^17.0.8",
+        "autoprefixer": "^9.8.6",
+        "electron": "^13.1.4",
+        "electron-builder": "^22.11.7",
+        "postcss": "^7.0.36",
+        "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.4",
+        "ts-loader": "^9.2.3",
+        "typescript": "^4.3.4"
+    },
+    "build": {
+        "appId": "nonExistentID",
+        "files": [
+            "build/**/*",
+            "node_modules/**/*"
+        ],
+        "directories": {
+            "buildResources": "assets"
+        }
+    }
+}
