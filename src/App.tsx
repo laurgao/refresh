@@ -19,7 +19,7 @@ function App() {
         } else {
             document.documentElement.classList.remove('dark')
         }
-    }, [localStorage.theme])
+    }, [])
     
     const toggleDarkMode = () => {
         localStorage.theme === 'dark' ? localStorage.theme = "light" : localStorage.theme = "dark"
@@ -74,7 +74,8 @@ function App() {
 
     useEffect(() => {
         setStartTime(new Date());
-        setTimeLeft(calculateTimeLeft())
+        let tl = calculateTimeLeft()
+        setTimeLeft(tl);
     }, []) 
 
     // useEffect(() => {
@@ -98,7 +99,7 @@ function App() {
                 setTimeLeft(tl);
             }
         }
-    }, [timeLeft])
+    }, [timeLeft, breakLength, state])
 
     const [soundStatus, setSoundStatus] = useState<"PLAYING"|"STOPPED">("STOPPED");
     console.log(soundStatus)
