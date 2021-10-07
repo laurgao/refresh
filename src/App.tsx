@@ -44,7 +44,7 @@ function App() {
         setIsSettings(false);
     }
 
-    const [state, setState] = useState<"Break"|"Screen time"|"other">("Screen time");
+    const [state, setState] = useState<"Break"|"Screen time"|"Break over"|"other">("Screen time");
     const [isSettings, setIsSettings] = useState<boolean>(false);
     const [startTime, setStartTime] = useState<Date>();
     
@@ -79,33 +79,35 @@ function App() {
         setTimeLeft(calculateTimeLeft())
     }, []) 
 
-    useEffect(() => {
-        // When state changes, start timer.
-        setStartTime(new Date());
-        setTimeLeft(calculateTimeLeft());
-        setBreakOver(false);
-    }, [state])
+    // useEffect(() => {
+    //     // When state changes, start timer.
+    //     setStartTime(new Date());
+    //     setTimeLeft(calculateTimeLeft());
+    //     setState("Screen time");
+    // }, [state])
 
-    const [breakOver, setBreakOver] = useState<boolean>(false); 
     useEffect(() => {
         // setState("Screen time");
-        if (state === "Break") setBreakOver(true);
-    }, [state === "Break" && timeLeft && timeLeft?.minutes >= Number(breakLength)])
-    // console.log(typeof(breakLength)) // string. why?
-
-    useEffect(() => {
-        if (timeLeft && timeLeft.minutes >= Number(localStorage.screenTimeLength)) {
-            setState("Break");
-            setSoundStatus("PLAYING")
+        if (timeLeft && timeLeft.minutes >= Number(breakLength)) {
+            
+            if (state === "Break") setState("Break over");
+            else if (state === "Screen time"){
+                setState("Break");
+                setSoundStatus("PLAYING")
+                // start timer.
+                setStartTime(new Date());
+                setTimeLeft(calculateTimeLeft());
+            }
         }
-    }, [state === "Screen time" && timeLeft && timeLeft?.minutes >= Number(localStorage.screenTimeLength)])
+    }, [timeLeft && timeLeft?.minutes >= Number(breakLength)])
 
     const [soundStatus, setSoundStatus] = useState<"PLAYING"|"STOPPED">("STOPPED");
+    console.log(soundStatus)
     // if (timeLeft) console.log(state === "Screen time" && timeLeft?.minutes === Number(localStorage.screenTimeLength))
 
     return (
         <div className={`px-4 ${state === "Break" ? "dark:bg-red bg-red" : "bg-white dark:bg-black"}`}>
-            <Button className="dark:text-white dark:border-black z-40" onClick={() => setState(state === "Break" ? "Screen time" : "Break")}>Current state: {state}</Button>
+            <Button className="dark:text-white dark:border-black z-40" onClick={() => console.log("useless")}>Current state: {state}</Button>
             <Sound
                 url="https://glpro.s3.amazonaws.com/_util/smpte/111.mp3"
                 playStatus={soundStatus}
@@ -148,19 +150,32 @@ function App() {
                 </div>
                 </>
             </Modal>
-            <Navbar toggleDarkMode={toggleDarkMode} state={state} setState={setState} setIsSettings={setIsSettings}/>
+            <Navbar toggleDarkMode={toggleDarkMode} state={state} onTakeBreak={
+                () => {
+                    setState("Break");
+                        // start timer.
+                    setStartTime(new Date());
+                    setTimeLeft(calculateTimeLeft());
+                }
+            } setIsSettings={setIsSettings}/>
             <div className="max-w-5xl mx-auto px-4">
                 <div className="flex items-center justify-center w-full h-screen">
                     <div className="text-center">
-                        {(state === "Screen time" || state === "Break") && !breakOver && timeLeft && <div className="text-gray-700 dark:text-gray-300">
+                        {(state === "Screen time" || state === "Break") && timeLeft && <div className="text-gray-700 dark:text-gray-300">
                             <p className="time text-8xl">{screenTimeLength > 60 && `${timeLeft.hours} : `}{timeLeft.minutes < 10 && "0"}
                             {timeLeft.minutes} : {timeLeft.seconds < 10 && "0"}
                             {timeLeft.seconds}</p>                            
                             <p className="opacity-50 mt-2">{state} elapsed</p>
                         </div>}
-                        {breakOver && <div className="text-gray-700 dark:text-gray-300">
+                        {state === "Break over" && <div className="text-gray-700 dark:text-gray-300">
                             <p className="time text-8xl">Break over</p> 
-                            <PrimaryButton onClick={() => setState("Screen time")}>I'm back!</PrimaryButton>
+                            <PrimaryButton onClick={() => {
+                                // start timer.
+                                setStartTime(new Date());
+                                setTimeLeft(calculateTimeLeft());
+                                setState("Screen time");
+                                setSoundStatus("STOPPED")
+                                }}>I'm back!</PrimaryButton>
                         </div>}
                         {state === "other" && <PrimaryButton onClick={() => {setState("Screen time")}}>Start</PrimaryButton>}
                     </div>
