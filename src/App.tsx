@@ -6,8 +6,6 @@ import "./App.css";
 import Button from "./components/Button";
 import Navbar from "./components/Navbar";
 import PrimaryButton from "./components/PrimaryButton";
-const alarm = require("./sounds/sound.mp3");
-const ding = require("./sounds/ding.mp3")
 
 function App() {
     interface timeObj {
@@ -96,10 +94,11 @@ function App() {
                 setSoundStatus("PLAYING")
                 // start timer.
                 setStartTime(new Date());
-                setTimeLeft(calculateTimeLeft());
+                let tl = calculateTimeLeft()
+                setTimeLeft(tl);
             }
         }
-    }, [timeLeft && timeLeft?.minutes >= Number(breakLength)])
+    }, [timeLeft])
 
     const [soundStatus, setSoundStatus] = useState<"PLAYING"|"STOPPED">("STOPPED");
     console.log(soundStatus)
