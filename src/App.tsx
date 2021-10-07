@@ -76,7 +76,7 @@ function App() {
         setStartTime(new Date());
         let tl = calculateTimeLeft()
         setTimeLeft(tl);
-    }, []) 
+    }, [calculateTimeLeft]) 
 
     // useEffect(() => {
     //     // When state changes, start timer.
@@ -99,7 +99,7 @@ function App() {
                 setTimeLeft(tl);
             }
         }
-    }, [timeLeft, breakLength, state])
+    }, [timeLeft, breakLength, state, calculateTimeLeft])
 
     const [soundStatus, setSoundStatus] = useState<"PLAYING"|"STOPPED">("STOPPED");
     console.log(soundStatus)
