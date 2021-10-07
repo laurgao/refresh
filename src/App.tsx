@@ -7,6 +7,23 @@ import Button from "./components/Button";
 import Navbar from "./components/Navbar";
 import PrimaryButton from "./components/PrimaryButton";
 
+
+    
+function calculateTimeLeft(startTime: Date|undefined) {
+    if (!startTime) return
+    const difference: number = +new Date() - +startTime; // + casts date to integer in microseconds
+    let timeLeft: any = {};
+
+    if (difference > 0) {
+        timeLeft = {
+            hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+            minutes: Math.floor((difference / 1000 / 60) % 60),
+            seconds: Math.floor((difference / 1000) % 60)
+        };
+    }
+    return timeLeft; 
+};
+
 function App() {
     interface timeObj {
         minutes: number,
@@ -44,44 +61,23 @@ function App() {
 
     const [state, setState] = useState<"Break"|"Screen time"|"Break over"|"other">("Screen time");
     const [isSettings, setIsSettings] = useState<boolean>(false);
-    const [startTime, setStartTime] = useState<Date>();
-    
-    const calculateTimeLeft = () => {
-        if (!startTime) return;
-        const difference: number = +new Date() - +startTime; // + casts date to integer in microseconds
-        let timeLeft: any = {};
+    const [startTime, setStartTime] = useState<Date>(new Date());
 
-        if (difference > 0) {
-            timeLeft = {
-                hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-                minutes: Math.floor((difference / 1000 / 60) % 60),
-                seconds: Math.floor((difference / 1000) % 60)
-            };
-        }
-        return timeLeft; 
-    };
-
-    const [timeLeft, setTimeLeft] = useState<timeObj>();
+    const [timeLeft, setTimeLeft] = useState<timeObj>(calculateTimeLeft(startTime));
 
     useEffect(() => {
         const timer = setTimeout(() => {
-          setTimeLeft(calculateTimeLeft());
+          setTimeLeft(calculateTimeLeft(startTime));
         }, 1000);
         // Clear timeout if the component is unmounted
         return () => clearTimeout(timer);
 
     });
 
-    useEffect(() => {
-        setStartTime(new Date());
-        let tl = calculateTimeLeft()
-        setTimeLeft(tl);
-    }, [calculateTimeLeft]) 
-
     // useEffect(() => {
     //     // When state changes, start timer.
     //     setStartTime(new Date());
-    //     setTimeLeft(calculateTimeLeft());
+    //     setTimeLeft(calculateTimeLeft(startTime));
     //     setState("Screen time");
     // }, [state])
 
@@ -95,11 +91,11 @@ function App() {
                 setSoundStatus("PLAYING")
                 // start timer.
                 setStartTime(new Date());
-                let tl = calculateTimeLeft()
+                let tl = calculateTimeLeft(startTime)
                 setTimeLeft(tl);
             }
         }
-    }, [timeLeft, breakLength, state, calculateTimeLeft])
+    }, [timeLeft, breakLength, state, startTime])
 
     const [soundStatus, setSoundStatus] = useState<"PLAYING"|"STOPPED">("STOPPED");
     console.log(soundStatus)
@@ -155,7 +151,7 @@ function App() {
                     setState("Break");
                         // start timer.
                     setStartTime(new Date());
-                    setTimeLeft(calculateTimeLeft());
+                    setTimeLeft(calculateTimeLeft(startTime));
                 }
             } setIsSettings={setIsSettings}/>
             <div className="max-w-5xl mx-auto px-4">
@@ -172,7 +168,7 @@ function App() {
                             <PrimaryButton onClick={() => {
                                 // start timer.
                                 setStartTime(new Date());
-                                setTimeLeft(calculateTimeLeft());
+                                setTimeLeft(calculateTimeLeft(startTime));
                                 setState("Screen time");
                                 setSoundStatus("STOPPED")
                                 }}>I'm back!</PrimaryButton>
