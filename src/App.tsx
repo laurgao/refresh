@@ -74,8 +74,8 @@ function App() {
 
     });
 
-    const exceededBreakLength: boolean = timeElapsed && timeElapsed.minutes >= Number(breakLength)
-    const exceededScreenTimeLength: boolean = timeElapsed && timeElapsed.minutes >= Number(screenTimeLength)
+    const exceededBreakLength: boolean = timeElapsed && timeElapsed.minutes >= Number(localStorage.breakLength)
+    const exceededScreenTimeLength: boolean = timeElapsed && timeElapsed.minutes >= Number(localStorage.screenTimeLength)
     useEffect(() => {
         if (exceededBreakLength && state === "Break") {
             setState("Break over");
