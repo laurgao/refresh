@@ -3,7 +3,6 @@ import { FaTimes } from "react-icons/fa";
 import Modal from "react-modal";
 import Sound from "react-sound";
 import "./App.css";
-import Button from "./components/Button";
 import Navbar from "./components/Navbar";
 import PrimaryButton from "./components/PrimaryButton";
 
@@ -30,17 +29,6 @@ function calculateElapsedTime(startTime: Date): timeObj {
 };
 
 function App() {
-    useEffect(() => {
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark')
-        } else {
-            document.documentElement.classList.remove('dark')
-        }
-    }, [])
-    
-    const toggleDarkMode = () => {
-        localStorage.theme === 'dark' ? localStorage.theme = "light" : localStorage.theme = "dark"
-    }
 
     
     const [breakLength, setBreakLength] = useState<number>(5);
@@ -92,11 +80,9 @@ function App() {
     }, [exceededScreenTimeLength, state, startTime])
 
     const [soundStatus, setSoundStatus] = useState<"PLAYING"|"STOPPED">("STOPPED");
-    console.log(timeElapsed)
 
     return (
-        <div className={`px-4 ${(state === "Break" || state === "Break over") ? "bg-red-500" : "bg-white dark:bg-black"}`}>
-            <Button className="dark:text-white dark:border-black z-40" onClick={() => console.log("useless")}>Current state: {state}</Button>
+        <div className={`px-4 h-screen flex items-center justify-center text-center ${(state === "Break" || state === "Break over") ? "bg-red-500" : "bg-white dark:bg-black"}`}>
             <Sound
                 url="https://glpro.s3.amazonaws.com/_util/smpte/111.mp3"
                 playStatus={soundStatus}
@@ -128,7 +114,7 @@ function App() {
                 </div>
                 </>
             </Modal>
-            <Navbar toggleDarkMode={toggleDarkMode} state={state} onTakeBreak={
+            <Navbar state={state} onTakeBreak={
                 () => {
                         // start timer.
                     setStartTime(new Date());
@@ -137,32 +123,27 @@ function App() {
                 }
             } setIsSettings={setIsSettings}/>
             <div className="max-w-5xl mx-auto px-4">
-                <div className="flex items-center justify-center w-full h-screen">
-                    <div className="text-center">
-                        {(state === "Screen time" || state === "Break") && <div className="text-gray-700 dark:text-gray-300">
-                            <p className="time text-8xl">{!!(timeElapsed.hours) && `${timeElapsed.hours} : `}{(!timeElapsed.minutes || timeElapsed.minutes < 10) && 0}
-                            {timeElapsed.minutes || 0} : {(!timeElapsed.seconds || timeElapsed.seconds < 10) && 0}
-                            {timeElapsed.seconds || 0}</p>                            
-                            <p className="opacity-50 mt-2">{state} elapsed</p>
-                        </div>}
-                        {state === "Break over" && <div className="text-gray-700 dark:text-gray-300">
-                            <p className="time text-8xl">Break over</p> 
-                            <PrimaryButton onClick={() => {
-                                // start timer.
-                                setStartTime(new Date());
-                                setTimeElapsed(calculateElapsedTime(new Date()));
-                                setState("Screen time");
-                                setSoundStatus("STOPPED");
-                                }}>I'm back!</PrimaryButton>
-                        </div>}
-                        {state === "other" && <PrimaryButton onClick={() => {
-                            setStartTime(new Date());
-                            setTimeElapsed(calculateElapsedTime(new Date()));
-                            setState("Screen time")
-                        }}>Start</PrimaryButton>}
-                    </div>
-                  
-                </div>
+                {(state === "Screen time" || state === "Break") && <div className="text-gray-700 dark:text-gray-300">
+                    <p className="time text-8xl">{!!(timeElapsed.hours) && `${timeElapsed.hours} : `}{(!timeElapsed.minutes || timeElapsed.minutes < 10) && 0}
+                    {timeElapsed.minutes || 0} : {(!timeElapsed.seconds || timeElapsed.seconds < 10) && 0}
+                    {timeElapsed.seconds || 0}</p>                            
+                    <p className="opacity-50 mt-2">{state} elapsed</p>
+                </div>}
+                {state === "Break over" && <div className="text-gray-700 dark:text-gray-300">
+                    <p className="time text-8xl">Break over</p> 
+                    <PrimaryButton className="mt-4" onClick={() => {
+                        // start timer.
+                        setStartTime(new Date());
+                        setTimeElapsed(calculateElapsedTime(new Date()));
+                        setState("Screen time");
+                        setSoundStatus("STOPPED");
+                        }}>I'm back!</PrimaryButton>
+                </div>}
+                {state === "other" && <PrimaryButton onClick={() => {
+                    setStartTime(new Date());
+                    setTimeElapsed(calculateElapsedTime(new Date()));
+                    setState("Screen time")
+                }}>Start</PrimaryButton>}
 
             </div>
         </div> 
