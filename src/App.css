@@ -1,11 +1,3 @@
-.theme {
-    color: #006b3a;
-}
-
-.bg-primary {
-    background-color: #006b3a;
-}
-
 @font-face {
     font-family: 'TickingTimebomb';
     src: url('TickingTimebombBB.ttf'); /* IE9 Compat Modes */
