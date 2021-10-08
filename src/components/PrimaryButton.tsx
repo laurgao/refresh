@@ -1,6 +1,6 @@
 import Button from "./Button";
 
-const PrimaryButton = ({onClick, children, href, isLoading, isDisabled, className} : {
+const PrimaryButton = ({onClick, children, href, isLoading, isDisabled, className = ""} : {
     onClick?: any,
     children: any,
     href?: string,
@@ -14,7 +14,7 @@ const PrimaryButton = ({onClick, children, href, isLoading, isDisabled, classNam
             href={href} 
             isLoading={isLoading} 
             isDisabled={isDisabled}
-            className={`bg-red-700 text-white hover:bg-black ${className && className}`}
+            className={`bg-red-700 text-white ${(!isDisabled && !isLoading) && "hover:bg-black"} ${className}`}
         >{children}</Button>
     )
 }

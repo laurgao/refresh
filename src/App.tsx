@@ -7,6 +7,8 @@ import Navbar from "./components/Navbar";
 import PrimaryButton from "./components/PrimaryButton";
 
 
+const isNaturalNumber = (str: any): boolean => !isNaN(str) && Number.isInteger(parseFloat(str)) && Number(str) > 0;
+
 interface timeObj {
     minutes: number,
     hours: number,
@@ -30,20 +32,17 @@ function calculateElapsedTime(startTime: Date): timeObj {
 
 function App() {
 
-    
-    const [breakLength, setBreakLength] = useState<number>(5);
-    const [screenTimeLength, setScreenTimeLength] = useState<number>(60);
     useEffect(() => {
         if (!('breakLength' in localStorage)) localStorage.breakLength = 5 // is first time
-        setBreakLength(localStorage.breakLength) 
-
         if(!("screenTimeLength" in localStorage)) localStorage.screenTimeLength = 60
-        setScreenTimeLength(localStorage.screenTimeLength)
-    }, [])
+    }, [])    
+    
+    const [breakLength, setBreakLength] = useState(localStorage.breakLength);
+    const [screenTimeLength, setScreenTimeLength] = useState(localStorage.screenTimeLength);
 
     const onSettingsSubmit = () => {
-        localStorage.breakLength = breakLength;
-        localStorage.screenTimeLength = screenTimeLength;
+        localStorage.breakLength = Number(breakLength);
+        localStorage.screenTimeLength = Number(screenTimeLength);
         setIsSettings(false);
     }
 
@@ -92,25 +91,38 @@ function App() {
             
             <Modal
                 isOpen = {isSettings}
-                onRequestClose={() => setIsSettings(false)}
-                className="z-40 w-full h-full "
+                onRequestClose={() => {
+                    setIsSettings(false);
+                    setScreenTimeLength(localStorage.screenTimeLength)
+                    setBreakLength(localStorage.breakLength)
+                }}
+                className="top-24 left-1/2 fixed bg-white p-8 rounded-md shadow-xl mx-4"
+                style={{content: {transform: "translateX(calc(-50% - 16px))", maxWidth: "calc(100% - 32px)", width: 700}, overlay: {zIndex: 50}}}
             >
                 <>
                 <div className="absolute">
-                    <FaTimes onClick={() => setIsSettings(false)} className="black dark:white cursor-pointer opacity-70"/>
+                    <FaTimes onClick={() => {
+                        setIsSettings(false);
+                        setScreenTimeLength(localStorage.screenTimeLength)
+                        setBreakLength(localStorage.breakLength)
+                    }} className="black dark:white cursor-pointer opacity-70"/>
                 </div>
-                <div className="flex items-center flex-col justify-center w-full h-full">
-                    <p>Take <input 
+                <div className="flex items-center flex-col justify-center w-full h-full mt-12 text-center">
+                    <p>Take a <input 
                         value={breakLength} 
-                        onChange={e => setBreakLength(Number(e.target.value))}
+                        onChange={e => setBreakLength(e.target.value)}
                         placeholder="5"
+                        className="border border-black mx-2 rounded-md p-2 my-1 w-16"
                     /> minute break every <input 
-                        onChange={e => setScreenTimeLength(Number(e.target.value))}
+                        onChange={e => setScreenTimeLength(e.target.value)}
                         placeholder="60"
                         value={screenTimeLength}
+                        className="border border-black mx-2 rounded-md p-2 my-1 w-16"
                     /> minutes</p>
                     
-                    <PrimaryButton onClick={onSettingsSubmit}>Save</PrimaryButton>
+                    <PrimaryButton onClick={onSettingsSubmit} className="mt-12" isDisabled={
+                        !isNaturalNumber(screenTimeLength) || !isNaturalNumber(breakLength)
+                    }>Save</PrimaryButton>
                 </div>
                 </>
             </Modal>
@@ -123,13 +135,13 @@ function App() {
                 }
             } setIsSettings={setIsSettings}/>
             <div className="max-w-5xl mx-auto px-4">
-                {(state === "Screen time" || state === "Break") && <div className="text-gray-700 dark:text-gray-300">
+                {(state === "Screen time" || state === "Break") && <div className="text-black opacity-60 dark:text-white dark:opacity-80">
                     <p className="time text-8xl">{!!(timeElapsed.hours) && `${timeElapsed.hours} : `}{(!timeElapsed.minutes || timeElapsed.minutes < 10) && 0}
                     {timeElapsed.minutes || 0} : {(!timeElapsed.seconds || timeElapsed.seconds < 10) && 0}
                     {timeElapsed.seconds || 0}</p>                            
                     <p className="opacity-50 mt-2">{state} elapsed</p>
                 </div>}
-                {state === "Break over" && <div className="text-gray-700 dark:text-gray-300">
+                {state === "Break over" && <div className="text-black opacity-60 dark:text-white dark:opacity-80">
                     <p className="time text-8xl">Break over</p> 
                     <PrimaryButton className="mt-4" onClick={() => {
                         // start timer.
@@ -146,6 +158,12 @@ function App() {
                 }}>Start</PrimaryButton>}
 
             </div>
+
+            <p className="absolute bottom-4 right-4 opacity-30 hover:opacity-50 text-black dark:text-white transition text-sm">
+                Keep this tab constantly open in the background, and Refresh will remind you to take a break whenever your screen
+                time is up.
+            </p>
+
         </div> 
     );
 }

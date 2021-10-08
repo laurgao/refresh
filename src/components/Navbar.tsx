@@ -27,7 +27,7 @@ const Navbar = ({state, onTakeBreak, setIsSettings}: {state: "Screen time"|strin
             <div className="flex flex-row gap-4">
                 <TextButton onClick={toggleDarkMode}><FaMoon /></TextButton>
                 <TextButton onClick={() => setIsSettings(true)}><FaCog /></TextButton>
-                {state === "Screen time" && <PrimaryButton onClick={onTakeBreak}>Take Break</PrimaryButton>}
+                {state === "Screen time" && <PrimaryButton onClick={onTakeBreak}>Take break</PrimaryButton>}
             </div>
         </nav>
     )
