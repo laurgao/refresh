@@ -8,28 +8,28 @@ import Navbar from "./components/Navbar";
 import PrimaryButton from "./components/PrimaryButton";
 
 
+interface timeObj {
+    minutes: number,
+    hours: number,
+    seconds: number
+}
     
-function calculateTimeLeft(startTime: Date|undefined) {
-    if (!startTime) return
+function calculateElapsedTime(startTime: Date): timeObj {
+    // helper function that returns amount of time from `startTime` to now.
     const difference: number = +new Date() - +startTime; // + casts date to integer in microseconds
-    let timeLeft: any = {};
+    let elapsedTime: any = {};
 
     if (difference > 0) {
-        timeLeft = {
+        elapsedTime = {
             hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
             minutes: Math.floor((difference / 1000 / 60) % 60),
             seconds: Math.floor((difference / 1000) % 60)
         };
     }
-    return timeLeft; 
+    return elapsedTime; 
 };
 
 function App() {
-    interface timeObj {
-        minutes: number,
-        hours: number,
-        seconds: number
-    }
     useEffect(() => {
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark')
@@ -63,65 +63,47 @@ function App() {
     const [isSettings, setIsSettings] = useState<boolean>(false);
     const [startTime, setStartTime] = useState<Date>(new Date());
 
-    const [timeLeft, setTimeLeft] = useState<timeObj>(calculateTimeLeft(startTime));
+    const [timeElapsed, setTimeElapsed] = useState<timeObj>(calculateElapsedTime(new Date()));
 
     useEffect(() => {
         const timer = setTimeout(() => {
-          setTimeLeft(calculateTimeLeft(startTime));
+          setTimeElapsed(calculateElapsedTime(startTime));
         }, 1000);
         // Clear timeout if the component is unmounted
         return () => clearTimeout(timer);
 
     });
 
-    // useEffect(() => {
-    //     // When state changes, start timer.
-    //     setStartTime(new Date());
-    //     setTimeLeft(calculateTimeLeft(startTime));
-    //     setState("Screen time");
-    // }, [state])
-
+    const exceededBreakLength: boolean = timeElapsed && timeElapsed.minutes >= Number(breakLength)
+    const exceededScreenTimeLength: boolean = timeElapsed && timeElapsed.minutes >= Number(screenTimeLength)
     useEffect(() => {
-        // setState("Screen time");
-        if (timeLeft && timeLeft.minutes >= Number(breakLength)) {
-            
-            if (state === "Break") setState("Break over");
-            else if (state === "Screen time"){
-                setState("Break");
-                setSoundStatus("PLAYING")
-                // start timer.
-                setStartTime(new Date());
-                let tl = calculateTimeLeft(startTime)
-                setTimeLeft(tl);
-            }
+        if (exceededBreakLength && state === "Break") {
+            setState("Break over");
         }
-    }, [timeLeft, breakLength, state, startTime])
+    }, [exceededBreakLength, state, startTime])
+    useEffect(() => {
+        if (exceededScreenTimeLength && state === "Screen time"){
+            setSoundStatus("PLAYING")
+            // start timer.
+            setStartTime(new Date());
+            setTimeElapsed(calculateElapsedTime(new Date()));
+            setState("Break");
+        }
+    }, [exceededScreenTimeLength, state, startTime])
 
     const [soundStatus, setSoundStatus] = useState<"PLAYING"|"STOPPED">("STOPPED");
-    console.log(soundStatus)
-    // if (timeLeft) console.log(state === "Screen time" && timeLeft?.minutes === Number(localStorage.screenTimeLength))
+    console.log(timeElapsed)
 
     return (
-        <div className={`px-4 ${state === "Break" ? "dark:bg-red bg-red" : "bg-white dark:bg-black"}`}>
+        <div className={`px-4 ${(state === "Break" || state === "Break over") ? "bg-red-500" : "bg-white dark:bg-black"}`}>
             <Button className="dark:text-white dark:border-black z-40" onClick={() => console.log("useless")}>Current state: {state}</Button>
             <Sound
                 url="https://glpro.s3.amazonaws.com/_util/smpte/111.mp3"
                 playStatus={soundStatus}
-                playFromPosition={300 }
-                
-                // onLoading={handleSongLoading}
-                // onPlaying={handleSongPlaying}
+                // playFromPosition={300}
                 onFinishedPlaying={() => setSoundStatus("STOPPED")}
             />
             
-            {/* {soundStatus==="PLAYING" && <audio controls autoPlay className="z-40 absolute">
-                <source src="https://glpro.s3.amazonaws.com/_util/smpte/111.mp3" type="audio/mp3"/>
-            </audio>} */}
-            {/* <audio controls autoPlay className="z-40 absolute">
-                <source src="https://glpro.s3.amazonaws.com/_util/smpte/111.mp3" type="audio/mp3"/>
-            </audio>
-            <iframe src="https://glpro.s3.amazonaws.com/_util/smpte/111.mp3" allow="autoplay">
-    </iframe>  */}
             <Modal
                 isOpen = {isSettings}
                 onRequestClose={() => setIsSettings(false)}
@@ -148,19 +130,19 @@ function App() {
             </Modal>
             <Navbar toggleDarkMode={toggleDarkMode} state={state} onTakeBreak={
                 () => {
-                    setState("Break");
                         // start timer.
                     setStartTime(new Date());
-                    setTimeLeft(calculateTimeLeft(startTime));
+                    setTimeElapsed(calculateElapsedTime(new Date()));
+                    setState("Break");
                 }
             } setIsSettings={setIsSettings}/>
             <div className="max-w-5xl mx-auto px-4">
                 <div className="flex items-center justify-center w-full h-screen">
                     <div className="text-center">
-                        {(state === "Screen time" || state === "Break") && timeLeft && <div className="text-gray-700 dark:text-gray-300">
-                            <p className="time text-8xl">{screenTimeLength > 60 && `${timeLeft.hours} : `}{timeLeft.minutes < 10 && "0"}
-                            {timeLeft.minutes} : {timeLeft.seconds < 10 && "0"}
-                            {timeLeft.seconds}</p>                            
+                        {(state === "Screen time" || state === "Break") && <div className="text-gray-700 dark:text-gray-300">
+                            <p className="time text-8xl">{!!(timeElapsed.hours) && `${timeElapsed.hours} : `}{(!timeElapsed.minutes || timeElapsed.minutes < 10) && 0}
+                            {timeElapsed.minutes || 0} : {(!timeElapsed.seconds || timeElapsed.seconds < 10) && 0}
+                            {timeElapsed.seconds || 0}</p>                            
                             <p className="opacity-50 mt-2">{state} elapsed</p>
                         </div>}
                         {state === "Break over" && <div className="text-gray-700 dark:text-gray-300">
@@ -168,12 +150,16 @@ function App() {
                             <PrimaryButton onClick={() => {
                                 // start timer.
                                 setStartTime(new Date());
-                                setTimeLeft(calculateTimeLeft(startTime));
+                                setTimeElapsed(calculateElapsedTime(new Date()));
                                 setState("Screen time");
-                                setSoundStatus("STOPPED")
+                                setSoundStatus("STOPPED");
                                 }}>I'm back!</PrimaryButton>
                         </div>}
-                        {state === "other" && <PrimaryButton onClick={() => {setState("Screen time")}}>Start</PrimaryButton>}
+                        {state === "other" && <PrimaryButton onClick={() => {
+                            setStartTime(new Date());
+                            setTimeElapsed(calculateElapsedTime(new Date()));
+                            setState("Screen time")
+                        }}>Start</PrimaryButton>}
                     </div>
                   
                 </div>
