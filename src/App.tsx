@@ -141,8 +141,8 @@ function App() {
                     {timeElapsed.seconds || 0}</p>                            
                     <p className="opacity-50 mt-2">{state} elapsed</p>
                 </div>}
-                {state === "Break over" && <div className="text-black opacity-60 dark:text-white dark:opacity-80">
-                    <p className="time text-8xl">Break over</p> 
+                {state === "Break over" && <>
+                    <p className="time text-8xl text-black opacity-60 dark:text-white dark:opacity-80">Break over</p> 
                     <PrimaryButton className="mt-4" onClick={() => {
                         // start timer.
                         setStartTime(new Date());
@@ -150,7 +150,7 @@ function App() {
                         setState("Screen time");
                         setSoundStatus("STOPPED");
                         }}>I'm back!</PrimaryButton>
-                </div>}
+                </>}
                 {state === "other" && <PrimaryButton onClick={() => {
                     setStartTime(new Date());
                     setTimeElapsed(calculateElapsedTime(new Date()));
