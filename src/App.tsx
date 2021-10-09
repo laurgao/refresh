@@ -134,7 +134,7 @@ function App() {
             } setIsSettings={setIsSettings}/>
             <div className="max-w-5xl mx-auto px-4">
                 {(state === "Screen time" || state === "Break") && <div className="text-black opacity-60 dark:text-white dark:opacity-80">
-                    <p className="time text-8xl">{timeElapsed.minutes && timeElapsed.minutes >= 60 && `${Math.floor(timeElapsed.minutes / 60)} : `}{(!timeElapsed.minutes || timeElapsed.minutes % 60 < 10) && 0}
+                    <p className="time text-8xl">{(timeElapsed.minutes && timeElapsed.minutes >= 60) ? `${Math.floor(timeElapsed.minutes / 60)} : ` : ""}{(!timeElapsed.minutes || timeElapsed.minutes % 60 < 10) && 0}
                     {timeElapsed.minutes % 60 || 0} : {(!timeElapsed.seconds || timeElapsed.seconds < 10) && 0}
                     {timeElapsed.seconds || 0}</p>                            
                     <p className="opacity-50 mt-2">{state} elapsed</p>
