@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import Modal from "react-modal";
 import Sound from "react-sound";
@@ -57,6 +57,7 @@ function App() {
 
     const [state, setState] = useState<"Break"|"Screen time"|"Break over"|"other">("Screen time");
     const [isSettings, setIsSettings] = useState<boolean>(false);
+    const [isInstall, setIsInstall] = useState<boolean>(false);
     const [startTime, setStartTime] = useState<Date>(new Date());
 
     const [timeElapsed, setTimeElapsed] = useState<timeObj>(calculateElapsedTime(new Date()));
@@ -97,26 +98,27 @@ function App() {
                 playStatus={soundStatus}
                 onFinishedPlaying={() => setSoundStatus("STOPPED")}
             />
+
+            <MyModal isOpen={isInstall} onRequestClose={() => setIsInstall(false)}>
+                <>
+                <h1 className="font-bold text-xl text-center mb-8">Download the Refresh desktop app</h1>
+                <div className="flex items-center justify-center">
+                    <PrimaryButton href="https://www.dropbox.com/s/q8qyktktb4xmfb6/Refresh%20Setup%200.1.0.exe?dl=1">Windows</PrimaryButton>
+                </div>
+                <p className="text-right mt-12 sm:w-2/3 ml-auto text-xs text-gray-400">Support for MacOS and Linux will come once Laura figures out how to get Electron.js to build installers for those operating systems on her Windows laptop.</p>
+                </>
+            </MyModal>
             
-            <Modal
+            <MyModal
                 isOpen = {isSettings}
                 onRequestClose={() => {
                     setIsSettings(false);
                     setScreenTimeLength(localStorage.screenTimeLength)
                     setBreakLength(localStorage.breakLength)
                 }}
-                className="top-24 left-1/2 fixed bg-white p-8 rounded-md shadow-xl mx-4"
-                style={{content: {transform: "translateX(calc(-50% - 16px))", maxWidth: "calc(100% - 32px)", width: 700}, overlay: {zIndex: 50}}}
             >
                 <>
-                <div className="absolute">
-                    <FaTimes onClick={() => {
-                        setIsSettings(false);
-                        setScreenTimeLength(localStorage.screenTimeLength)
-                        setBreakLength(localStorage.breakLength)
-                    }} className="black dark:white cursor-pointer opacity-70"/>
-                </div>
-                <div className="flex items-center flex-col justify-center w-full h-full mt-12 text-center">
+                <div className="flex items-center flex-col justify-center w-full h-full text-center">
                     <p>Take a <input 
                         value={breakLength} 
                         onChange={e => setBreakLength(e.target.value)}
@@ -134,7 +136,7 @@ function App() {
                     }>Save</PrimaryButton>
                 </div>
                 </>
-            </Modal>
+            </MyModal>
             <Navbar state={state} onTakeBreak={
                 () => {
                         // start timer.
@@ -142,7 +144,7 @@ function App() {
                     setTimeElapsed(calculateElapsedTime(new Date()));
                     setState("Break");
                 }
-            } setIsSettings={setIsSettings}/>
+            } setIsSettings={setIsSettings} setIsInstall={setIsInstall}/>
             <div className="max-w-5xl mx-auto px-4">
                 {(state === "Screen time" || state === "Break") && <div className="text-black opacity-60 dark:text-white dark:opacity-80">
                     <p className="time text-8xl">
@@ -181,3 +183,23 @@ function App() {
 }
 
 export default App;
+
+function MyModal({isOpen, onRequestClose, children}: {isOpen: boolean, onRequestClose: () => any, children: ReactNode}) {
+    return (
+        <Modal
+            isOpen ={isOpen}
+            onRequestClose={onRequestClose}
+            className="top-24 left-1/2 fixed bg-white p-8 rounded-md shadow-xl mx-4"
+            style={{content: {transform: "translateX(calc(-50% - 16px))", maxWidth: "calc(100% - 32px)", width: 700}, overlay: {zIndex: 50}}}
+        >
+            <>
+            <div className="absolute">
+                <FaTimes onClick={onRequestClose} className="black dark:white cursor-pointer opacity-70"/>
+            </div>
+            <div className="mt-8">
+                {children}
+            </div>
+            </>
+        </Modal>
+    )
+}
