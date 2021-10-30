@@ -31,8 +31,19 @@ function calculateElapsedTime(startTime: Date): timeObj {
 function App() {
 
     useEffect(() => {
-        if (!('breakLength' in localStorage)) localStorage.breakLength = 5 // is first time
-        if(!("screenTimeLength" in localStorage)) localStorage.screenTimeLength = 60
+        if (!('breakLength' in localStorage)) {
+            // is first time
+            localStorage.breakLength = 5;
+            setBreakLength(5);
+        }
+        if(!("screenTimeLength" in localStorage)) {
+            localStorage.screenTimeLength = 60;
+            setScreenTimeLength(60);
+        }
+        
+        const sound = new Audio("https://glpro.s3.amazonaws.com/_util/smpte/111.mp3")
+        sound.muted = true;
+        sound.play();
     }, [])    
     
     const [breakLength, setBreakLength] = useState(localStorage.breakLength);
@@ -79,11 +90,11 @@ function App() {
     const [soundStatus, setSoundStatus] = useState<"PLAYING"|"STOPPED">("STOPPED");
 
     return (
+        <>
         <div className={`px-4 h-screen flex items-center justify-center text-center ${(state === "Break" || state === "Break over") ? "bg-red-500" : "bg-white dark:bg-black"}`}>
             <Sound
                 url="https://glpro.s3.amazonaws.com/_util/smpte/111.mp3"
                 playStatus={soundStatus}
-                // playFromPosition={300}
                 onFinishedPlaying={() => setSoundStatus("STOPPED")}
             />
             
@@ -134,9 +145,12 @@ function App() {
             } setIsSettings={setIsSettings}/>
             <div className="max-w-5xl mx-auto px-4">
                 {(state === "Screen time" || state === "Break") && <div className="text-black opacity-60 dark:text-white dark:opacity-80">
-                    <p className="time text-8xl">{(timeElapsed.minutes && timeElapsed.minutes >= 60) ? `${Math.floor(timeElapsed.minutes / 60)} : ` : ""}{(!timeElapsed.minutes || timeElapsed.minutes % 60 < 10) && 0}
-                    {timeElapsed.minutes % 60 || 0} : {(!timeElapsed.seconds || timeElapsed.seconds < 10) && 0}
-                    {timeElapsed.seconds || 0}</p>                            
+                    <p className="time text-8xl">
+                        {(timeElapsed.minutes && timeElapsed.minutes >= 60) ? `${Math.floor(timeElapsed.minutes / 60)} : ` : ""}
+                        {(!timeElapsed.minutes || timeElapsed.minutes % 60 < 10) && 0}{timeElapsed.minutes % 60 || 0}
+                        {" "}:{" "}
+                        {(!timeElapsed.seconds || timeElapsed.seconds < 10) && 0}{timeElapsed.seconds || 0}
+                    </p>                            
                     <p className="opacity-50 mt-2">{state} elapsed</p>
                 </div>}
                 {state === "Break over" && <>
@@ -156,13 +170,13 @@ function App() {
                 }}>Start</PrimaryButton>}
 
             </div>
-
-            <p className="absolute bottom-4 right-4 opacity-30 hover:opacity-50 text-black dark:text-white transition text-sm">
-                Keep this tab constantly open in the background, and Refresh will remind you to take a break whenever your screen
-                time is up.
-            </p>
-
         </div> 
+
+        <p className="absolute bottom-4 right-0 text-right mx-8 opacity-30 hover:opacity-50 text-black dark:text-white transition text-sm">
+            Keep this tab constantly open in the background, and Refresh will remind you to take a break whenever your screen
+            time is up.
+        </p>
+        </>
     );
 }
 
