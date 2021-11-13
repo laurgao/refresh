@@ -4,10 +4,9 @@ import { FaCog, FaMoon, FaDownload } from "react-icons/fa";
 import PrimaryButton from "./PrimaryButton";
 import TextButton from "./TextButton";
 
-const Navbar = ({state, onTakeBreak, setIsSettings, setIsInstall}: {
+const Navbar = ({state, onTakeBreak, setIsSettings}: {
     state: "Screen time"|string, onTakeBreak: () => any, 
     setIsSettings: Dispatch<SetStateAction<boolean>>, 
-    setIsInstall: Dispatch<SetStateAction<boolean>>
 }) => {
     useEffect(() => {
         if (localStorage.theme === 'dark' || (!('theme' in localStorage))) { //  && window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -29,7 +28,6 @@ const Navbar = ({state, onTakeBreak, setIsSettings, setIsInstall}: {
             </div>
             
             <div className="flex flex-row gap-4">
-                <TextButton onClick={() => setIsInstall(true)}><FaDownload /></TextButton>
                 <TextButton onClick={toggleDarkMode}><FaMoon /></TextButton>
                 <TextButton onClick={() => setIsSettings(true)}><FaCog /></TextButton>
                 {state === "Screen time" && <PrimaryButton onClick={onTakeBreak}>Take break</PrimaryButton>}

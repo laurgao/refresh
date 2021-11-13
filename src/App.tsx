@@ -71,7 +71,6 @@ function App() {
 
     const [state, setState] = useState<"Break"|"Screen time"|"Break over"|"other">("Screen time");
     const [isSettings, setIsSettings] = useState<boolean>(false);
-    const [isInstall, setIsInstall] = useState<boolean>(false);
     const [startTime, setStartTime] = useState<Date>(new Date());
 
     const [timeElapsed, setTimeElapsed] = useState<timeObj>(calculateElapsedTime(new Date()));
@@ -109,16 +108,6 @@ function App() {
                 playStatus={soundStatus}
                 onFinishedPlaying={() => setSoundStatus("STOPPED")}
             />
-
-            <MyModal isOpen={isInstall} onRequestClose={() => setIsInstall(false)}>
-                <>
-                <h1 className="font-bold text-xl text-center mb-8">Download the Refresh desktop app</h1>
-                <div className="flex items-center justify-center">
-                    <PrimaryButton href="https://www.dropbox.com/s/q8qyktktb4xmfb6/Refresh%20Setup%200.1.0.exe?dl=1">Windows</PrimaryButton>
-                </div>
-                <p className="text-right mt-12 sm:w-2/3 ml-auto text-xs text-gray-400">Support for MacOS and Linux will come once Laura figures out how to get Electron.js to build installers for those operating systems on her Windows laptop.</p>
-                </>
-            </MyModal>
             
             <MyModal
                 isOpen = {isSettings}
@@ -148,7 +137,7 @@ function App() {
                 </div>
                 </>
             </MyModal>
-            <Navbar state={state} onTakeBreak={takeBreak} setIsSettings={setIsSettings} setIsInstall={setIsInstall}/>
+            <Navbar state={state} onTakeBreak={takeBreak} setIsSettings={setIsSettings}/>
             <div className="max-w-5xl mx-auto px-4">
                 {(state === "Screen time" || state === "Break") && <div className="text-black opacity-60 dark:text-white dark:opacity-80">
                     <p className="time text-8xl">
