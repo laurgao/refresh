@@ -9,7 +9,7 @@
     "version": "0.1.0",
     "private": true,
     "main": "public/electron.js",
-    "homepage": "https://takebreaks.vercel.app/",
+    "homepage": "./",
     "dependencies": {
         "@craco/craco": "^6.1.2",
         "@testing-library/jest-dom": "^5.14.1",
