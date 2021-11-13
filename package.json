@@ -1,11 +1,15 @@
 {
-    "name": "Refresh",
-    "author": "laura gao",
-    "description": "Force yourself to take breaks, force yourself to stay refreshed (especially on those awesome long deep work sesions).",
+    "name": "refresh",
+    "author": {
+        "name": "Laura Gao",
+        "email": "gaolauro@gmail.com",
+        "url": "https://lauragao.ca"
+    },
+    "description": "Force yourself to take breaks, force yourself to stay refreshed (especially on those long INTENSE work sesions).",
     "version": "0.1.0",
     "private": true,
-    "main": "public/Main.js",
-    "homepage": "./",
+    "main": "public/electron.js",
+    "homepage": "https://takebreaks.vercel.app/",
     "dependencies": {
         "@craco/craco": "^6.1.2",
         "@testing-library/jest-dom": "^5.14.1",
@@ -14,6 +18,8 @@
         "@types/react-icons": "^3.0.0",
         "@types/react-modal": "^3.12.0",
         "@types/react-sound": "^1.2.2",
+        "auto-launch": "^5.0.5",
+        "electron-is-dev": "^2.0.0",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-icons": "^4.2.0",
@@ -29,7 +35,7 @@
         "eject": "react-scripts eject",
         "electron-start": "electron .",
         "preelectron-pack": "npm run build",
-        "electron-pack": "electron-builder -c.extraMetadata.main=build/Main.js"
+        "electron-pack": "electron-builder"
     },
     "eslintConfig": {
         "extends": [

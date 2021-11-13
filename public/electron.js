@@ -1,25 +1,45 @@
 // include the Node.js "path" module at the top of your file
 const path = require("path")
 
-const { app, BrowserWindow } = require("electron")
+const { app, BrowserWindow } = require("electron");
+const isDev = require('electron-is-dev');
+
+var AutoLaunch = require('auto-launch');
+var autoLauncher = new AutoLaunch({
+    name: "MyApp"
+});
+// Checking if autoLaunch is enabled, if not then enabling it.
+autoLauncher.isEnabled().then(function(isEnabled) {
+    if (isEnabled) return;
+    autoLauncher.enable();
+}).catch(function(err) {
+    throw err;
+});
+
 
 function createWindow() {
     const win = new BrowserWindow({
+            title: "Refresh",
             width: 800,
             height: 600,
+            autoHideMenuBar: true,
             webPreferences: {
-                preload: path.join(__dirname, "preload.js") // gets preload.js
-            }
+                // preload: path.join(__dirname, "preload.js"), // gets preload.js
+                enableRemoteModule: true,
+                nodeIntegration: true,
+                contextIsolation: false,
+            },
         })
         // win.webContents.openDevTools() ctrl+shift+i does the job.
 
-    // win.loadFile("public/index.html")
-    // win.loadURL('http://localhost:3000/')
-    win.loadURL(`file://${path.join(__dirname, '../build/index.html')}`)
+    win.loadURL(
+        isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`
+    );
+
 
     globalShortcut.register('f5', function() {
         console.log('f5 is pressed')
-        mainWindow.reload()
+        win.reload()
     })
     globalShortcut.register('CommandOrControl+R', function() {
         console.log('CommandOrControl+R is pressed')
@@ -27,6 +47,7 @@ function createWindow() {
     })
 
 }
+
 
 app.on("window-all-closed", function() {
     if (process.platform !== "darwin") app.quit()
@@ -44,3 +65,6 @@ app.whenReady().then(() => {
 }).catch((e) => (
     console.log(e)
 ))
+
+// win.setAlwaysOnTop(true)
+// win.show()

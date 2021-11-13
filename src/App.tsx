@@ -5,6 +5,9 @@ import Sound from "react-sound";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import PrimaryButton from "./components/PrimaryButton";
+const electron = window.require('electron');
+const remote = electron.remote
+const mainWindow = remote.getCurrentWindow()
 
 
 const isNaturalNumber = (str: any): boolean => !isNaN(str) && Number.isInteger(parseFloat(str)) && Number(str) > 0;
@@ -55,6 +58,17 @@ function App() {
         setIsSettings(false);
     }
 
+    const takeBreak = () => {
+        mainWindow.setFullScreen(true);
+        mainWindow.setAlwaysOnTop(true);
+        mainWindow.show();
+
+        // start timer.
+        setStartTime(new Date());
+        setTimeElapsed(calculateElapsedTime(new Date()));
+        setState("Break");
+    }
+
     const [state, setState] = useState<"Break"|"Screen time"|"Break over"|"other">("Screen time");
     const [isSettings, setIsSettings] = useState<boolean>(false);
     const [isInstall, setIsInstall] = useState<boolean>(false);
@@ -80,11 +94,8 @@ function App() {
     }, [exceededBreakLength, state, startTime])
     useEffect(() => {
         if (exceededScreenTimeLength && state === "Screen time"){
-            setSoundStatus("PLAYING")
-            // start timer.
-            setStartTime(new Date());
-            setTimeElapsed(calculateElapsedTime(new Date()));
-            setState("Break");
+            setSoundStatus("PLAYING");
+            takeBreak();
         }
     }, [exceededScreenTimeLength, state, startTime])
 
@@ -137,14 +148,7 @@ function App() {
                 </div>
                 </>
             </MyModal>
-            <Navbar state={state} onTakeBreak={
-                () => {
-                        // start timer.
-                    setStartTime(new Date());
-                    setTimeElapsed(calculateElapsedTime(new Date()));
-                    setState("Break");
-                }
-            } setIsSettings={setIsSettings} setIsInstall={setIsInstall}/>
+            <Navbar state={state} onTakeBreak={takeBreak} setIsSettings={setIsSettings} setIsInstall={setIsInstall}/>
             <div className="max-w-5xl mx-auto px-4">
                 {(state === "Screen time" || state === "Break") && <div className="text-black opacity-60 dark:text-white dark:opacity-80">
                     <p className="time text-8xl">
@@ -163,7 +167,10 @@ function App() {
                         setTimeElapsed(calculateElapsedTime(new Date()));
                         setState("Screen time");
                         setSoundStatus("STOPPED");
-                        }}>I'm back!</PrimaryButton>
+                        mainWindow.setAlwaysOnTop(false);
+                        mainWindow.setFullScreen(false);
+                        mainWindow.hide();
+                    }}>I'm back!</PrimaryButton>
                 </>}
                 {state === "other" && <PrimaryButton onClick={() => {
                     setStartTime(new Date());
