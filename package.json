@@ -6,7 +6,7 @@
         "url": "https://lauragao.ca"
     },
     "description": "Force yourself to take breaks, force yourself to stay refreshed (especially on those long INTENSE work sesions).",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "private": true,
     "main": "public/electron.js",
     "homepage": "./",
