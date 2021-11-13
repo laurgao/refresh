@@ -1,6 +1,6 @@
 
 import { Dispatch, SetStateAction, useEffect } from "react";
-import { FaCog, FaMoon, FaDownload } from "react-icons/fa";
+import { FaCog, FaMoon } from "react-icons/fa";
 import PrimaryButton from "./PrimaryButton";
 import TextButton from "./TextButton";
 
