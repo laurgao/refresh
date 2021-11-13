@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaWindows } from "react-icons/fa";
 import Modal from "react-modal";
 import Sound from "react-sound";
 import "./App.css";
@@ -101,9 +101,14 @@ function App() {
 
             <MyModal isOpen={isInstall} onRequestClose={() => setIsInstall(false)}>
                 <>
-                <h1 className="font-bold text-xl text-center mb-8">Download the Refresh desktop app</h1>
+                <h1 className="font-bold text-xl text-center mb-1">Download the Refresh 0.1.1 desktop app</h1>
+                <p className="text-center mb-8 text-gray-700">Lock down your screen during break time, so that you're forced to take breaks.</p>
                 <div className="flex items-center justify-center">
-                    <PrimaryButton href="https://www.dropbox.com/s/q8qyktktb4xmfb6/Refresh%20Setup%200.1.0.exe?dl=1">Windows</PrimaryButton>
+                    <PrimaryButton 
+                        href="https://www.dropbox.com/s/iq0kdcpptuyrn33/refresh%20Setup%200.1.1.exe?dl=1"
+                    >
+                        <div className="flex items-center"><FaWindows/><span className="ml-2">Windows</span></div>
+                    </PrimaryButton>
                 </div>
                 <p className="text-right mt-12 sm:w-2/3 ml-auto text-xs text-gray-400">Support for MacOS and Linux will come once Laura figures out how to get Electron.js to build installers for those operating systems on her Windows laptop.</p>
                 </>
